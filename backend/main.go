@@ -7,6 +7,8 @@ import (
 	"os/signal"
 	"syscall"
 
+	interfaces "github.com/3436lele/go-novel/backend/command/interface"
+	"github.com/3436lele/go-novel/backend/config"
 	_ "github.com/kjk/common/filerotate"
 )
 
@@ -15,7 +17,7 @@ var (
 )
 
 func main() {
-	log := slog.With(slog.String("program", "main"))
+	log := slog.With(slog.String("domain", "main"))
 
 	ctx, cancel := context.WithCancel(context.Background())
 	go func() {
@@ -37,9 +39,29 @@ func main() {
 		}
 	}()
 
-	select {
-	case <-ctx.Done():
-		log.Info("context done")
+	run(ctx)
+}
+
+func run(ctx context.Context) {
+	log := slog.With(slog.String("domain", "main"))
+
+	env := os.Getenv("ENV")
+	var configPath string
+	if env == "" {
+		configPath = "config/config.dev.yaml"
+	} else {
+		configPath = "config/config." + env + ".yaml"
 	}
 
+	cfg, err := config.InitConfig(configPath)
+	if err != nil {
+		panic("failed to initialize config: " + err.Error())
+	}
+
+	log.Info("Initializing server ...")
+	server := interfaces.NewServer(cfg)
+
+	if err := server.Start(); err != nil {
+		log.Error("server error", "error", err)
+	}
 }
