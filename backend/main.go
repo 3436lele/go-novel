@@ -7,8 +7,9 @@ import (
 	"os/signal"
 	"syscall"
 
-	interfaces "github.com/3436lele/go-novel/backend/command/interface"
 	"github.com/3436lele/go-novel/backend/config"
+	"github.com/3436lele/go-novel/backend/gateway"
+	"github.com/3436lele/go-novel/backend/services/novel"
 	_ "github.com/kjk/common/filerotate"
 )
 
@@ -58,10 +59,15 @@ func run(ctx context.Context) {
 		panic("failed to initialize config: " + err.Error())
 	}
 
-	log.Info("Initializing server ...")
-	server := interfaces.NewServer(cfg)
+	log.Info("Initializing API Gateway ...")
+	gw := gateway.NewGateway(cfg)
 
-	if err := server.Start(); err != nil {
-		log.Error("server error", "error", err)
+	// 注册服务
+	novelService := novel.NewNovelService()
+	gw.RegisterService(novelService)
+
+	// 启动网关
+	if err := gw.Start(); err != nil {
+		log.Error("gateway error", "error", err)
 	}
 }
