@@ -1,0 +1,10 @@
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    container_name: vue-frontend
+    ports:
+      - "80:80"       # 映射宿主机80端口到容器80端口
+    restart: always    # 容器崩溃自动重启
+

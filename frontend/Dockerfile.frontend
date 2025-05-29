@@ -1,0 +1,28 @@
+# 第一步：构建阶段，基于 Ubuntu 的 Node 环境
+FROM node:20 AS build
+WORKDIR /app
+COPY . .
+RUN npm install
+RUN npm run build
+
+# 第二步：部署阶段，使用 Ubuntu + Nginx
+FROM ubuntu:22.04
+
+# 安装 nginx
+RUN apt update && \
+    apt install -y nginx && \
+    rm -rf /var/lib/apt/lists/*
+
+# 清空默认 nginx 网站内容
+RUN rm -rf /var/www/html/*
+
+# 拷贝构建好的前端资源到 nginx 的 web 根目录
+COPY --from=build /app/dist /var/www/html
+
+# 拷贝自定义 nginx 配置文件
+COPY nginx.conf /etc/nginx/sites-available/default
+
+# 确保 nginx 前台运行
+CMD ["nginx", "-g", "daemon off;"]
+
+EXPOSE 80
