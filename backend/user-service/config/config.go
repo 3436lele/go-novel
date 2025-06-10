@@ -4,14 +4,22 @@ import (
 	"github.com/spf13/viper"
 )
 
-type ServerConfig struct {
+type UserServiceConfig struct {
 	Host string `yaml:"host"`
 	Port string `yaml:"port"`
-	Mode string `yaml:"mode"`
+}
+
+type DatabaseConfig struct {
+	Host     string `yaml:"host"`
+	Port     string `yaml:"port"`
+	User     string `yaml:"user"`
+	Password string `yaml:"password"`
+	DBName   string `yaml:"dbname"`
 }
 
 type Config struct {
-	Server ServerConfig `yaml:"server"`
+	UserService UserServiceConfig `yaml:"user_service"`
+	Database    DatabaseConfig    `yaml:"database"`
 }
 
 func InitConfig(configPath string) (*Config, error) {

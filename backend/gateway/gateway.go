@@ -70,8 +70,8 @@ func NewGateway(cfg *config.Config) *Gateway {
 		server: &http.Server{
 			Handler:      engine,
 			Addr:         cfg.Server.Host + ":" + cfg.Server.Port,
-			ReadTimeout:  15 * time.Second,
-			WriteTimeout: 15 * time.Second,
+			ReadTimeout:  30 * time.Second,
+			WriteTimeout: 30 * time.Second,
 			IdleTimeout:  60 * time.Second,
 		},
 	}

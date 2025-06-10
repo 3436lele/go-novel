@@ -1,0 +1,10 @@
+user_service:
+  host: localhost
+  port: 8081
+
+database:
+  host: 1.15.2.112
+  port: 3306
+  user: user_service
+  password: userpass
+  dbname: go_novel
